@@ -145,7 +145,7 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu_utilization" {
 }
 
 
-resource "aws_cloudwatch_alarm" "low_cpu_credit_balance" {
+resource "aws_cloudwatch_metric_alarm" "low_cpu_credit_balance" {
 	count = "${format("%.1s", var.instance_type) == "t" ? 1 : 0}"
 	alarm_name = "${var.cluster_name}-low-credit-balance"
 	namespace = "AWS/EC2"
