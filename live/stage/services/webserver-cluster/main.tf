@@ -6,8 +6,8 @@ provider "aws" {
 
 
 #uses the webserver cluster module from the modules folder
-module "webserver_cluster" {
-	source = "../../../modules/services/webserver-cluster"
+module "webserver_cluster" {	
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.2"
 
 	cluster_name = "webservers-stage"
 	db_remote_state_bucket = "jacob-terraform-state"

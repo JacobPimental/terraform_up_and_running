@@ -3,8 +3,7 @@ provider "aws" {
 }
 
 module "database_cluster" {
-	source = "../../../modules/data-stores/mysql"
-
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/data-stores/mysql?ref=v0.0.1"
 	cluster_name = "DatabaseProd"
 	db_password = "${var.db_password}"
 }
