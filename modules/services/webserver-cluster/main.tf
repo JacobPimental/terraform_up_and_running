@@ -10,6 +10,7 @@ resource "aws_security_group" "instance" {
 	}
 }
 
+
 resource "aws_security_group_rule" "server_inbound" {
 	type = "ingress"
 	security_group_id = "${aws_security_group.instance.id}"
@@ -19,10 +20,12 @@ resource "aws_security_group_rule" "server_inbound" {
 	cidr_blocks = ["0.0.0.0/0"]
 }
 
+
 #Creates Security group for Elastic Load Balancer
 resource "aws_security_group" "elb" {
 	name = "${var.cluster_name}-elb"
 }
+
 
 #rule to allow inbound http traffic
 resource "aws_security_group_rule" "allow_http_inbound" {
@@ -34,6 +37,7 @@ resource "aws_security_group_rule" "allow_http_inbound" {
 	cidr_blocks = ["0.0.0.0/0"]
 }
 
+
 #rule to allow all outbound traffic
 resource "aws_security_group_rule" "allow_all_outbound" {
 	type = "egress"
@@ -43,6 +47,7 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 	protocol = "-1"
 	cidr_blocks = ["0.0.0.0/0"]
 }
+
 
 #defines a resource
 resource "aws_launch_configuration" "example" {
@@ -55,6 +60,7 @@ resource "aws_launch_configuration" "example" {
 	 create_before_destroy = true
  }
 }
+
 
 #autoscaling group resource
 resource "aws_autoscaling_group" "example" {
@@ -72,6 +78,31 @@ resource "aws_autoscaling_group" "example" {
 		propagate_at_launch = true
 	}
 }
+
+
+resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
+	count = "${var.enable_autoscaling}"
+	scheduled_action_name = "scale-out-during-business-hours"
+	min_size = 2
+	max_size = 10
+	desired_capacity = 10
+	recurrence = "0 9 * * *"
+
+	autoscaling_group_name = "${module.webserver_cluster.asg_name}"
+}
+
+
+resource "aws_autoscaling_schedule" "scale_in_during_business_hours" {
+	count = "${var.enable_autoscaling}"
+	scheduled_action_name = "scale-in-during-business-hours"
+	min_size = 2
+	max_size = 10
+	desired_capacity = 2
+	recurrence = "0 17 * * *"
+
+	autoscaling_group_name = "${module.webserver_cluster.asg_name}"
+}
+
 
 #elastic load-balancer for autoscaling group
 resource "aws_elb" "example" {
@@ -96,7 +127,9 @@ resource "aws_elb" "example" {
 }
 
 
+
 #----------------------------------------------DATA--------------------------------------------------------
+
 
 
 #availability zone

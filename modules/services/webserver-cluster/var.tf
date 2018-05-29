@@ -22,6 +22,10 @@ variable "max_size" {
 	description = "THe maximum amount of servers we wish to have"
 }
 
+variable "enable_autoscaling" {
+	description = "If set to true, enable auto scaling"
+}
+
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
   default = 8080
