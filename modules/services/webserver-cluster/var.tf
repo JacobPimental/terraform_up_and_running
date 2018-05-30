@@ -30,6 +30,16 @@ variable "enable_new_user_data" {
 	description = "If set to true, use the new User Data script"
 }
 
+variable "ami" {
+	description = "The AMI to run in the cluster"
+	default = "ami-40d28157"
+}
+
+variable "server_text" {
+	description = "The text the web server should return"
+	default = "Hello, World"
+}
+
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
   default = 8080
