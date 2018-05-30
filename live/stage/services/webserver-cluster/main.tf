@@ -1,25 +1,58 @@
 #define our provider as aws
 provider "aws" {
-	region = "us-east-1"
+	region = "${var.aws_region}"
 }
 
 
 
 #uses the webserver cluster module from the modules folder
 module "webserver_cluster" {	
-	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.10"
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.11"
 
-	ami = "ami-40d28157"
-	server_text = "New Server Text!"
+	ami = "${data.aws_ami.ubuntu.id}"
+	server_text = "New Server Text"
 	enable_new_user_data = false
 	enable_autoscaling = false
-	cluster_name = "webservers-stage"
-	db_remote_state_bucket = "jacob-terraform-state"
-	db_remote_state_key = "stage/data-stores/mysql/terraform.tfstate"
+	aws_region = "${var.aws_region}"
+	cluster_name = "${var.cluster_name}"
+	db_remote_state_bucket = "${var.db_remote_state_bucket}"
+	db_remote_state_key = "${var.db_remote_state_key}"
 	instance_type = "t2.micro"
 	min_size = 2
 	max_size = 2
 }
+
+
+
+#---------------------------------------------BACKEND---------------------------------------------
+
+
+
+data "aws_ami" "ubuntu" {
+	most_recent = true
+	owners = ["099720109477"]
+
+	filter {
+		name = "virtualization-type"
+		values = ["hvm"]
+	}
+
+	filter {
+		name = "architecture"
+		values = ["x86_64"]
+	}
+
+	filter {
+		name = "image-type"
+		values = ["machine"]
+	}
+
+	filter {
+		name = "name"
+		values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+	}
+}
+
 
 
 #------------------------------------------BACKEND-------------------------------------------

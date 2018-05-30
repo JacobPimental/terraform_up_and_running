@@ -1,11 +1,11 @@
 provider "aws" {
-	region = "us-east-1"
+	region = "${var.aws_region}"
 }
 
 module "database_cluster" {
-	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/data-stores/mysql?ref=v0.0.1"
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/data-stores/mysql?ref=v0.0.12"
 
-	cluster_name = "DatabaseStage"
+	cluster_name = "${var.cluster_name}"
 	db_password = "${var.db_password}"
 }
 
