@@ -5,40 +5,15 @@ provider "aws" {
 
 #uses the webserver cluster module from the modules folder
 module "webserver_cluster" {
-	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.1" 
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.8" 
 
+	enable_autoscaling = true
 	cluster_name = "webservers-prod"
 	db_remote_state_bucket = "jacob-terraform-state"
 	db_remote_state_key = "prod/data-stores/mysql/terraform.tfstate"
 	instance_type = "t2.micro"
 	min_size = 2
 	max_size = 10
-}
-
-
-
-#---------------------------------------------RESOURCES---------------------------------------------
-
-
-
-resource "aws_autoscaling_schedule" "scale_out_during_business_hours" {
-	scheduled_action_name = "scale-out-during-business-hours"
-	min_size = 2
-	max_size = 10
-	desired_capacity = 10
-	recurrence = "0 9 * * *"
-
-	autoscaling_group_name = "${module.webserver_cluster.asg_name}"
-}
-
-resource "aws_autoscaling_schedule" "scale_in_during_business_hours" {
-	scheduled_action_name = "scale-in-during-business-hours"
-	min_size = 2
-	max_size = 10
-	desired_capacity = 2
-	recurrence = "0 17 * * *"
-
-	autoscaling_group_name = "${module.webserver_cluster.asg_name}"
 }
 
 
