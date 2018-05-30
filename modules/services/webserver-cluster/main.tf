@@ -24,6 +24,9 @@ resource "aws_security_group_rule" "server_inbound" {
 #Creates Security group for Elastic Load Balancer
 resource "aws_security_group" "elb" {
 	name = "${var.cluster_name}-elb"
+	lifecycle {
+		create_before_destroy = true
+	}
 }
 
 
@@ -65,6 +68,7 @@ resource "aws_launch_configuration" "example" {
 
 #autoscaling group resource
 resource "aws_autoscaling_group" "example" {
+	name = "${var.cluster_name}-${aws_launch_configuration.example.name}"
 	launch_configuration = "${aws_launch_configuration.example.id}"
 	availability_zones = ["${data.aws_availability_zones.all.names}"]
 	load_balancers = ["${aws_elb.example.name}"]
@@ -72,6 +76,11 @@ resource "aws_autoscaling_group" "example" {
 
 	min_size = "${var.min_size}"
 	max_size = "${var.max_size}"
+	min_elb_capacity = "${var.min_size}"
+
+	lifecycle {
+		create_before_destroy = true
+	}
 
 	tag {
 		key = "Name"
@@ -124,6 +133,9 @@ resource "aws_elb" "example" {
 		timeout = 3
 		interval = 30
 		target = "HTTP:${var.server_port}/"
+	}
+	lifecycle {
+		create_before_destroy = true
 	}
 }
 

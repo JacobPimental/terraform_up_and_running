@@ -7,8 +7,11 @@ provider "aws" {
 
 #uses the webserver cluster module from the modules folder
 module "webserver_cluster" {	
-	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.4"
+	source = "git::git@github.com:JacobPimental/terraform_up_and_running.git//modules/services/webserver-cluster?ref=v0.0.10"
 
+	ami = "ami-40d28157"
+	server_text = "New Server Text!"
+	enable_new_user_data = false
 	enable_autoscaling = false
 	cluster_name = "webservers-stage"
 	db_remote_state_bucket = "jacob-terraform-state"
